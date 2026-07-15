@@ -11,7 +11,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Token'ı Railway değişkenlerinden çeker
 
 # Senin Discord ID'n (DM bildirimi için)
-MY_ID = 123456789012345678 
+MY_ID = 980764213683314739 
 
 # Oyun Listesi
 GAMES = [
