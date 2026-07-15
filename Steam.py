@@ -1,6 +1,17 @@
 import discord
+import os
 from discord.ext import commands
 from discord.ui import Select, View, Button
+
+# --- BOT AYARLARI ---
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+TOKEN = os.environ.get('DISCORD_BOT_TOKEN') # Token'ı Railway değişkenlerinden çeker
+
+# Senin Discord ID'n (DM bildirimi için)
+MY_ID = 123456789012345678 
 
 # Oyun Listesi
 GAMES = [
@@ -12,9 +23,6 @@ GAMES = [
     "The Last of Us part 2", "The Witcher 3: Wild Hunt", "Tomb Raider"
 ]
 
-# Senin Discord ID'n (Bildirimlerin buraya gelmesi için)
-MY_ID = 123456789012345678 
-
 # --- Arayüz Sınıfları ---
 
 class GameSelect(Select):
@@ -23,7 +31,7 @@ class GameSelect(Select):
         super().__init__(placeholder="Satın almak istediğin oyunu seç...", options=options)
 
     async def callback(self, interaction: discord.Interaction):
-        # 1. Kullanıcıya özel bekleme mesajı (Sadece ona görünür)
+        # 1. Kullanıcıya özel bekleme mesajı
         await interaction.response.send_message("✅ Seçiminiz alındı! Satıcı aktif olana kadar bekleyin, size ulaşacaktır.", ephemeral=True)
         
         # 2. Sana DM atma işlemi
@@ -45,7 +53,11 @@ class GameView(View):
         super().__init__(timeout=None)
         self.add_item(GameSelect())
 
-# --- Bot Komutu ---
+# --- Bot Olayları ve Komutlar ---
+
+@bot.event
+async def on_ready():
+    print(f"Bot Hazır: {bot.user}")
 
 @bot.command()
 @commands.has_permissions(administrator=True)
@@ -58,3 +70,7 @@ async def oyunlar(ctx):
     )
     await ctx.send(embed=embed, view=GameView())
     await ctx.message.delete() # Komut mesajını temizler
+
+# --- BOTU BAŞLATMA ---
+if __name__ == "__main__":
+    bot.run(TOKEN)
